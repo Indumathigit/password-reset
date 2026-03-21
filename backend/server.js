@@ -5,23 +5,24 @@ const cors = require("cors");
 
 dotenv.config();
 
-const app = express();
+var app = express();
 
-// ✅ ADD CORS HERE
-app.use(cors());
+// Allow requests from the frontend
+app.use(cors({ origin: process.env.CLIENT_URL }));
 
-// ✅ JSON middleware
+// Parse incoming JSON requests
 app.use(express.json());
 
-// ✅ Routes
+// Auth routes
 app.use("/api/auth", require("./routes/auth"));
 
-// ✅ DB connection
-mongoose.connect(process.env.MONGO_URI)
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("DB Connected"))
-  .catch(err => console.log(err));
+  .catch((err) => console.log("DB Error:", err));
 
-// ✅ Server start
-app.listen(process.env.PORT || 5000, () => {
-  console.log("Server running");
+var PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
