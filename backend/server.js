@@ -3,20 +3,17 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
-dotenv.config();
+// only load .env file in development, not in production
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
 var app = express();
 
-// Allow requests from the frontend
 app.use(cors({ origin: process.env.CLIENT_URL }));
-
-// Parse incoming JSON requests
 app.use(express.json());
-
-// Auth routes
 app.use("/api/auth", require("./routes/auth"));
 
-// Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("DB Connected"))
