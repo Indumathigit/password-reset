@@ -1,23 +1,18 @@
-const nodemailer = require("nodemailer");
+const Brevo = require("@getbrevo/brevo");
 
 const sendEmail = async (to, subject, text) => {
-  var transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.BREVO_USER,
-      pass: process.env.BREVO_PASS,
-    },
-  });
+  var apiInstance = new Brevo.TransactionalEmailsApi();
 
-  await transporter.sendMail({
-    from: process.env.BREVO_USER,
-    to,
-    subject,
-    text,
-  });
+  var apiKey = apiInstance.authentications["apiKey"];
+  apiKey.apiKey = process.env.BREVO_API_KEY;
 
+  var sendSmtpEmail = new Brevo.SendSmtpEmail();
+  sendSmtpEmail.to = [{ email: to }];
+  sendSmtpEmail.sender = { email: "indumathimurugan745@gmail.com", name: "Password Reset" };
+  sendSmtpEmail.subject = subject;
+  sendSmtpEmail.textContent = text;
+
+  await apiInstance.sendTransacEmail(sendSmtpEmail);
   console.log("Reset email sent to:", to);
 };
 
